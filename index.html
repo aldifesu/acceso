@@ -6,13 +6,14 @@
     <title>Acceso Vivienda</title>
     <style>
         body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
-        .btn { background-color: #007bff; color: white; border: none; padding: 20px 40px; font-size: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
-        .btn:active { transform: scale(0.95); background-color: #0056b3; }
-        #status { margin-top: 20px; text-align: center; color: #555; }
+        .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .btn { background-color: #007bff; color: white; border: none; padding: 25px 50px; font-size: 22px; border-radius: 15px; cursor: pointer; font-weight: bold; width: 100%; }
+        .btn:active { transform: scale(0.98); background-color: #0056b3; }
+        #status { margin-top: 20px; color: #666; font-weight: bold; }
     </style>
 </head>
 <body>
-    <div style="text-align: center;">
+    <div class="container">
         <button class="btn" onclick="abrirPortal()">ABRIR PORTAL</button>
         <div id="status">Presiona para abrir</div>
     </div>
@@ -21,29 +22,31 @@
         function abrirPortal() {
             const status = document.getElementById('status');
             status.innerText = "Abriendo...";
+            status.style.color = "#666";
 
             const url = "https://shelly-91-eu.shelly.cloud/device/relay/control";
-            const data = new URLSearchParams();
-            data.append('id', 'D48AFC555D4C');
-            data.append('auth_key', 'ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA61');
-            data.append('turn', 'on');
+            
+            const params = new URLSearchParams();
+            params.append('id', 'D48AFC555D4C');
+            params.append('auth_key', 'ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA61');
+            params.append('turn', 'on');
 
             fetch(url, {
                 method: 'POST',
-                body: data,
+                body: params,
                 headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
             })
             .then(response => {
                 if (response.ok) {
-                    status.innerText = "Portal abierto correctamente";
+                    status.innerText = "✓ ABIERTO";
                     status.style.color = "green";
                 } else {
-                    status.innerText = "Error al abrir. Reintenta.";
+                    status.innerText = "✕ Error de Clave/ID";
                     status.style.color = "red";
                 }
             })
             .catch(error => {
-                status.innerText = "Error de conexión";
+                status.innerText = "✕ Error de Red";
                 status.style.color = "red";
             });
         }
