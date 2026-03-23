@@ -9,40 +9,42 @@
         .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 85%; max-width: 350px; }
         button { background: #007bff; color: white; border: none; padding: 25px; font-size: 22px; border-radius: 15px; cursor: pointer; width: 100%; font-weight: bold; }
         button:active { background: #0056b3; transform: scale(0.98); }
-        #status { margin-top: 20px; font-weight: bold; color: #28a745; display: none; }
+        #mensaje { margin-top: 20px; color: #28a745; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Acceso Portal</h1>
-        <button onclick="abrirYRefrescar()">ABRIR PORTAL</button>
-        <div id="status">✓ Solicitud enviada</div>
+        
+        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST" target="marco_oculto" onsubmit="mostrarMensaje()">
+            <input type="hidden" name="id" value="D48AFC555D4C">
+            <input type="hidden" name="auth_key" value="ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA91">
+            <input type="hidden" name="turn" value="on">
+            
+            <button type="submit" id="btn">ABRIR PORTAL</button>
+        </form>
+
+        <div id="mensaje">✓ Solicitud enviada</div>
     </div>
 
+    <iframe name="marco_oculto" id="marco_oculto" style="display:none;"></iframe>
+
     <script>
-        function abrirYRefrescar() {
-            const btn = document.querySelector('button');
-            const status = document.getElementById('status');
+        function mostrarMensaje() {
+            const btn = document.getElementById('btn');
+            const msg = document.getElementById('mensaje');
             
-            // 1. La URL que confirmaste que devuelve isok:true (usando GET para máxima compatibilidad)
-            const url = "https://shelly-91-eu.shelly.cloud/device/relay/control?id=D48AFC555D4C&auth_key=ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA91&turn=on";
-
-            // 2. Abrimos la URL en una ventana nueva (acción humana directa = éxito seguro)
-            const nuevaVentana = window.open(url, "_blank");
-
-            // 3. UI Feedback
+            btn.innerText = "PROCESANDO...";
             btn.disabled = true;
-            btn.innerText = "ABRIENDO...";
-            status.style.display = "block";
+            msg.style.display = "block";
 
-            // 4. Cerramos la pestaña de Shelly tras 1.5 segundos para que no vean el JSON
+            // Pasados 5 segundos el botón vuelve a la normalidad
             setTimeout(() => {
-                if (nuevaVentana) nuevaVentana.close();
-                btn.disabled = false;
                 btn.innerText = "ABRIR PORTAL";
-                status.style.display = "none";
-            }, 1500);
+                btn.disabled = false;
+                msg.style.display = "none";
+            }, 5000);
         }
     </script>
 
