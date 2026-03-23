@@ -3,48 +3,47 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Apertura Portal</title>
+    <title>Acceso Vivienda</title>
     <style>
         body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
-        .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 80%; max-width: 350px; }
-        button { background: #007bff; color: white; border: none; padding: 25px; font-size: 22px; border-radius: 15px; cursor: pointer; width: 100%; font-weight: bold; transition: background 0.2s; }
+        .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 85%; max-width: 350px; }
+        button { background: #007bff; color: white; border: none; padding: 25px; font-size: 22px; border-radius: 15px; cursor: pointer; width: 100%; font-weight: bold; }
         button:active { background: #0056b3; transform: scale(0.98); }
-        button:disabled { background: #6c757d; cursor: not-allowed; }
-        #mensaje { margin-top: 20px; color: #28a745; font-weight: bold; display: none; }
+        button:disabled { background: #6c757d; }
+        #status { margin-top: 20px; font-weight: bold; color: #28a745; display: none; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST" target="marco_oculto" onsubmit="confirmarEnvio()">
+        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST" target="hidden_frame" onsubmit="handleUI()">
             <input type="hidden" name="id" value="D48AFC555D4C">
             <input type="hidden" name="auth_key" value="ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA91">
             <input type="hidden" name="turn" value="on">
+            <input type="hidden" name="channel" value="0">
             
-            <button type="submit" id="btnAbrir">ABRIR PORTAL</button>
+            <button type="submit" id="mainBtn">ABRIR PORTAL</button>
         </form>
-
-        <div id="mensaje">✓ Solicitud enviada</div>
+        <div id="status">✓ Abriendo...</div>
     </div>
 
-    <iframe name="marco_oculto" style="display:none;"></iframe>
+    <iframe name="hidden_frame" style="display:none;"></iframe>
 
     <script>
-        function confirmarEnvio() {
-            const btn = document.getElementById('btnAbrir');
-            const msg = document.getElementById('mensaje');
+        function handleUI() {
+            const btn = document.getElementById('mainBtn');
+            const status = document.getElementById('status');
             
-            // Cambiamos el estado visual para dar feedback al usuario
-            btn.innerText = "ABRIENDO...";
             btn.disabled = true;
-            msg.style.display = "block";
+            btn.innerText = "PROCESANDO...";
+            status.style.display = "block";
 
-            // Pasados 4 segundos, reseteamos el botón para que puedan volver a usarlo
+            // Reset tras 5 segundos para permitir nuevos intentos
             setTimeout(() => {
-                btn.innerText = "ABRIR PORTAL";
                 btn.disabled = false;
-                msg.style.display = "none";
-            }, 4000);
+                btn.innerText = "ABRIR PORTAL";
+                status.style.display = "none";
+            }, 5000);
         }
     </script>
 
