@@ -5,21 +5,47 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Apertura Portal</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
-        .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 80%; max-width: 350px; }
-        button { background: #007bff; color: white; border: none; padding: 25px; font-size: 22px; border-radius: 15px; cursor: pointer; width: 100%; font-weight: bold; }
-        button:active { background: #0056b3; transform: scale(0.98); }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
+        .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 85%; max-width: 400px; }
+        h1 { color: #333; font-size: 24px; margin-bottom: 30px; }
+        button { 
+            background: #007bff; color: white; border: none; padding: 25px; 
+            font-size: 22px; border-radius: 15px; cursor: pointer; 
+            width: 100%; font-weight: bold; transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,123,255,0.3);
+        }
+        button:active { background: #0056b3; transform: scale(0.96); }
+        #mensaje { margin-top: 20px; color: #28a745; font-weight: bold; display: none; }
     </style>
 </head>
 <body>
     <div class="container">
-        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST">
+        <h1>Acceso Vivienda</h1>
+        
+        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST" target="vacio" onsubmit="mostrarExito()">
             <input type="hidden" name="id" value="D48AFC555D4C">
-            <input type="hidden" name="auth_key" value="ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA61">
+            <input type="hidden" name="auth_key" value="ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA91">
             <input type="hidden" name="turn" value="on">
             
             <button type="submit">ABRIR PORTAL</button>
         </form>
+
+        <div id="mensaje">✓ Solicitud enviada correctamente</div>
+        
+        <iframe name="vacio" style="display:none;"></iframe>
     </div>
+
+    <script>
+        function mostrarExito() {
+            document.getElementById('mensaje').style.display = 'block';
+            const btn = document.querySelector('button');
+            btn.innerText = "ABRIENDO...";
+            btn.style.background = "#6c757d";
+            btn.disabled = true;
+            
+            // Opcional: Recargar la página a los 5 segundos para limpiar el estado
+            setTimeout(() => { location.reload(); }, 5000);
+        }
+    </script>
 </body>
 </html>
