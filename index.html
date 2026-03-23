@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Acceso Vivienda</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background-color: #f4f4f9; }
+        .btn { background-color: #007bff; color: white; border: none; padding: 20px 40px; font-size: 24px; border-radius: 12px; cursor: pointer; box-shadow: 0 4px 6px rgba(0,0,0,0.1); transition: transform 0.1s; }
+        .btn:active { transform: scale(0.95); background-color: #0056b3; }
+        #status { margin-top: 20px; text-align: center; color: #555; }
+    </style>
+</head>
+<body>
+    <div style="text-align: center;">
+        <button class="btn" onclick="abrirPortal()">ABRIR PORTAL</button>
+        <div id="status">Presiona para abrir</div>
+    </div>
+
+    <script>
+        function abrirPortal() {
+            const status = document.getElementById('status');
+            status.innerText = "Abriendo...";
+
+            const url = "https://shelly-91-eu.shelly.cloud/device/relay/control";
+            const data = new URLSearchParams();
+            data.append('id', '[D48AFC555D4C]');
+            data.append('auth_key', '[ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA61]');
+            data.append('turn', 'on');
+
+            fetch(url, {
+                method: 'POST',
+                body: data,
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+            })
+            .then(response => {
+                if (response.ok) {
+                    status.innerText = "Portal abierto correctamente";
+                    status.style.color = "green";
+                } else {
+                    status.innerText = "Error al abrir. Reintenta.";
+                    status.style.color = "red";
+                }
+            })
+            .catch(error => {
+                status.innerText = "Error de conexión";
+                status.style.color = "red";
+            });
+        }
+    </script>
+</body>
+</html>
