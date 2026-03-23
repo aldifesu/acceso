@@ -5,57 +5,70 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acceso Vivienda</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
+        body { font-family: -apple-system, system-ui, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
         .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; }
-        h1 { color: #333; font-size: 22px; margin-bottom: 25px; }
         button { 
             background: #007bff; color: white; border: none; padding: 25px; 
             font-size: 22px; border-radius: 15px; cursor: pointer; 
             width: 100%; font-weight: bold; transition: all 0.3s;
-            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
         }
-        button:active { background: #0056b3; transform: scale(0.96); }
-        button:disabled { background: #6c757d; cursor: not-allowed; box-shadow: none; }
-        #status { margin-top: 20px; font-weight: bold; color: #28a745; display: none; min-height: 24px; }
+        button:active { transform: scale(0.96); }
+        button:disabled { background: #6c757d; cursor: not-allowed; }
+        #status { margin-top: 20px; font-weight: bold; min-height: 24px; }
     </style>
 </head>
 <body>
 
     <div class="container">
         <h1>Acceso Portal</h1>
-        
-        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST" target="hidden_frame" onsubmit="procesar()">
-            <input type="hidden" name="id" value="D48AFC555D4C">
-            <input type="hidden" name="auth_key" value="ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA61">
-            <input type="hidden" name="turn" value="on">
-            <input type="hidden" name="channel" value="0">
-            
-            <button type="submit" id="mainBtn">ABRIR PORTAL</button>
-        </form>
-
-        <div id="status">✓ Abriendo...</div>
+        <button id="mainBtn" onclick="abrirPortal()">ABRIR PORTAL</button>
+        <div id="status"></div>
     </div>
 
-    <iframe name="hidden_frame" id="hidden_frame" style="display:none;"></iframe>
-
     <script>
-        function procesar() {
+        // 1. CONFIGURACIÓN (Pega aquí la URL de tu Worker de Cloudflare)
+        const WORKER_URL = "https://nameless-cake-1ff4.rudefu.workers.dev";
+
+        async function abrirPortal() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const userKey = urlParams.get('key');
             const btn = document.getElementById('mainBtn');
             const status = document.getElementById('status');
-            
-            // Feedback visual inmediato
+
+            if (!userKey) {
+                status.innerText = "Error: Falta llave de acceso";
+                status.style.color = "#dc3545";
+                return;
+            }
+
             btn.disabled = true;
             btn.innerText = "PROCESANDO...";
-            status.style.display = "block";
+            status.innerText = "Verificando llave...";
+            status.style.color = "#666";
 
-            // Reseteo tras 6 segundos para permitir un nuevo intento
+            try {
+                // Llamamos al Worker (él se encarga de Shelly y de las claves secretas)
+                const response = await fetch(`${WORKER_URL}/?key=${userKey}`);
+
+                if (response.ok) {
+                    status.innerText = "✓ PUERTA ABIERTA";
+                    status.style.color = "#28a745";
+                } else {
+                    status.innerText = "Acceso Denegado o Caducado";
+                    status.style.color = "#dc3545";
+                }
+            } catch (error) {
+                status.innerText = "Error de conexión";
+                status.style.color = "#dc3545";
+            }
+
+            // Resetear botón tras 5 segundos
             setTimeout(() => {
                 btn.disabled = false;
                 btn.innerText = "ABRIR PORTAL";
-                status.style.display = "none";
-            }, 6000);
+                status.innerText = "";
+            }, 5000);
         }
     </script>
-
 </body>
 </html>
