@@ -3,42 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Diagnóstico Apertura</title>
+    <title>Acceso Vivienda</title>
     <style>
-        body { font-family: sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
-        .container { text-align: center; background: white; padding: 30px; border-radius: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); width: 90%; max-width: 400px; }
-        button { background: #007bff; color: white; border: none; padding: 20px; font-size: 20px; border-radius: 10px; cursor: pointer; width: 100%; font-weight: bold; }
-        
-        /* ESTO ES LO QUE HAS PEDIDO: CUADRO DE RESPUESTA VISIBLE */
-        #marco_diagnostico { 
-            width: 100%; 
-            height: 120px; 
-            margin-top: 20px; 
-            border: 2px solid #dc3545; /* Borde rojo para identificarlo */
-            background: #fff;
-            border-radius: 8px;
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #f0f2f5; }
+        .container { text-align: center; background: white; padding: 40px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); width: 85%; max-width: 380px; }
+        h1 { color: #333; font-size: 22px; margin-bottom: 25px; }
+        button { 
+            background: #007bff; color: white; border: none; padding: 25px; 
+            font-size: 22px; border-radius: 15px; cursor: pointer; 
+            width: 100%; font-weight: bold; transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(0,123,255,0.3);
         }
-        
-        .instrucciones { font-size: 13px; color: #666; margin-bottom: 15px; }
+        button:active { background: #0056b3; transform: scale(0.96); }
+        button:disabled { background: #6c757d; cursor: not-allowed; box-shadow: none; }
+        #status { margin-top: 20px; font-weight: bold; color: #28a745; display: none; min-height: 24px; }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Panel de Control</h1>
-        <p class="instrucciones">Pulsa el botón y lee el mensaje que aparece en el cuadro rojo:</p>
+        <h1>Acceso Portal</h1>
         
-        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST" target="marco_diagnostico">
+        <form action="https://shelly-91-eu.shelly.cloud/device/relay/control" method="POST" target="hidden_frame" onsubmit="procesar()">
             <input type="hidden" name="id" value="D48AFC555D4C">
             <input type="hidden" name="auth_key" value="ZGY0NGR1aWQ03FA30F8718C1CAC608463590652E6FBB3A1287F2095B25495689DA9379ED25A523AE141503EEA61">
             <input type="hidden" name="turn" value="on">
             <input type="hidden" name="channel" value="0">
             
-            <button type="submit">PROBAR APERTURA</button>
+            <button type="submit" id="mainBtn">ABRIR PORTAL</button>
         </form>
 
-        <iframe name="marco_diagnostico" id="marco_diagnostico"></iframe>
+        <div id="status">✓ Abriendo...</div>
     </div>
+
+    <iframe name="hidden_frame" id="hidden_frame" style="display:none;"></iframe>
+
+    <script>
+        function procesar() {
+            const btn = document.getElementById('mainBtn');
+            const status = document.getElementById('status');
+            
+            // Feedback visual inmediato
+            btn.disabled = true;
+            btn.innerText = "PROCESANDO...";
+            status.style.display = "block";
+
+            // Reseteo tras 6 segundos para permitir un nuevo intento
+            setTimeout(() => {
+                btn.disabled = false;
+                btn.innerText = "ABRIR PORTAL";
+                status.style.display = "none";
+            }, 6000);
+        }
+    </script>
 
 </body>
 </html>
